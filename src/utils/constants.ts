@@ -20,3 +20,45 @@ export const settings = {
 
 };
 
+/* Константы текстов интерфейса. */
+export const PRICE_UNIT = 'синапсов';
+export const FREE_PRICE_TEXT = 'Бесценно';
+export const SUCCESS_TEXT_PREFIX = 'Списано';
+export const ERRORS_SEPARATOR = '. ';
+
+export const ButtonText = {
+  buy: 'В корзину',
+  remove: 'Удалить из корзины',
+  unavailable: 'Недоступно',
+} as const;
+
+/* Константы CSS-классов, которые компоненты представления добавляют и убирают динамически. */
+export const CssClass = {
+  modalActive: 'modal_active',
+  paymentActive: 'button_alt-active',
+  cardCategory: 'card__category',
+} as const;
+
+/* Смещение порядкового номера товара в корзине относительно индекса в массиве (нумерация с единицы). */
+export const BASKET_ITEM_NUMBER_OFFSET = 1;
+
+/* Константа имён событий приложения. Используется и в моделях данных (генерация событий),
+и в компонентах представления (генерация событий), и в презентере (main.ts, подписка на события) -
+единый источник правды исключает дублирование строк-констант и опечатки в них. */
+export const AppEvent = {
+  CatalogChanged: 'catalog:changed',
+  PreviewChanged: 'preview:changed',
+  BasketChanged: 'basket:changed',
+  BuyerChanged: 'buyer:changed',
+  CardSelect: 'card:select',
+  CardBuy: 'card:buy',
+  BasketRemove: 'basket:remove',
+  BasketOpen: 'basket:open',
+  OrderOpen: 'order:open',
+  OrderChange: 'order:change',
+  OrderSubmit: 'order:submit',
+  ContactsChange: 'contacts:change',
+  ContactsSubmit: 'contacts:submit',
+  ModalClose: 'modal:close',
+} as const;
+

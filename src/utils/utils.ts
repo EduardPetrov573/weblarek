@@ -1,3 +1,19 @@
+import { ERRORS_SEPARATOR, FREE_PRICE_TEXT, PRICE_UNIT } from './constants';
+
+/**
+ * Форматирует цену товара для отображения ("750 синапсов", "Бесценно" для null)
+ */
+export function formatPrice(price: number | null): string {
+    return price === null ? FREE_PRICE_TEXT : `${price} ${PRICE_UNIT}`;
+}
+
+/**
+ * Объединяет тексты ошибок в одну строку, пропуская отсутствующие
+ */
+export function joinErrors(errors: Array<string | undefined>): string {
+    return errors.filter(Boolean).join(ERRORS_SEPARATOR);
+}
+
 export function pascalToKebab(value: string): string {
     return value.replace(/([a-z0–9])([A-Z])/g, "$1-$2").toLowerCase();
 }

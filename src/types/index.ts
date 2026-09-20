@@ -39,3 +39,58 @@ export interface IOrderResult {
     id: string;
     total: number;
 }
+
+// ===== Типы слоя представления (View) =====
+
+export type TCardBase = Pick<IProduct, 'id' | 'title' | 'price'>;
+
+export type TCatalogCard = TCardBase & Pick<IProduct, 'category' | 'image'>;
+
+export type TPreviewCard = TCatalogCard & Pick<IProduct, 'description'> & {
+    buttonText: string;
+    buttonDisabled: boolean;
+};
+
+export type TBasketCard = TCardBase & {
+    index: number;
+};
+
+export interface IGalleryRender {
+    items: HTMLElement[];
+}
+
+export interface IHeaderRender {
+    counter: number;
+}
+
+export interface IBasketRender {
+    items: HTMLElement[];
+    total: number;
+    valid: boolean;
+}
+
+export interface IModalRender {
+    content: HTMLElement;
+}
+
+export interface IFormState {
+    valid: boolean;
+    errors: string;
+}
+
+export type TOrderFormRender = Pick<IBuyer, 'payment' | 'address'> & IFormState;
+
+export type TContactsFormRender = Pick<IBuyer, 'email' | 'phone'> & IFormState;
+
+export type TSuccessRender = Pick<IOrderResult, 'total'>;
+
+// ===== Типы событий =====
+
+export interface IProductIdEvent {
+    id: string;
+}
+
+export interface IFormFieldChangeEvent {
+    field: string;
+    value: string;
+}
