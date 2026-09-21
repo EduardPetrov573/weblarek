@@ -8,13 +8,13 @@ export class PreviewCard extends ProductCard<TPreviewCard> {
     protected textElement: HTMLElement;
     protected buttonElement: HTMLButtonElement;
 
-    constructor(container: HTMLElement, events: IEvents) {
-        super(container, events);
+    constructor(container: HTMLElement, protected events: IEvents) {
+        super(container);
         this.textElement = ensureElement<HTMLElement>('.card__text', container);
         this.buttonElement = ensureElement<HTMLButtonElement>('.card__button', container);
 
         this.buttonElement.addEventListener('click', () => {
-            this.events.emit(AppEvent.CardBuy, { id: this.id });
+            this.events.emit(AppEvent.CardAction);
         });
     }
 

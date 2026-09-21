@@ -14,7 +14,7 @@ export class Success extends Component<TSuccessRender> {
         this.closeButton = ensureElement<HTMLButtonElement>('.order-success__close', container);
 
         this.closeButton.addEventListener('click', () => {
-            this.events.emit(AppEvent.ModalClose);
+            this.events.emit(AppEvent.SuccessClose);
         });
     }
 

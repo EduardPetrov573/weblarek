@@ -30,21 +30,11 @@ const buyerModel = new BuyerModel(events);
 const gallery = new Gallery(ensureElement<HTMLElement>('.gallery'));
 const header = new Header(ensureElement<HTMLElement>('.header'), events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
-
-const previewContainer = cloneTemplate<HTMLElement>('#card-preview');
-const previewCard = new PreviewCard(previewContainer, events);
-
-const basketContainer = cloneTemplate<HTMLElement>('#basket');
-const basket = new Basket(basketContainer, events);
-
-const orderContainer = cloneTemplate<HTMLFormElement>('#order');
-const orderForm = new OrderForm(orderContainer, events);
-
-const contactsContainer = cloneTemplate<HTMLFormElement>('#contacts');
-const contactsForm = new ContactsForm(contactsContainer, events);
-
-const successContainer = cloneTemplate<HTMLElement>('#success');
-const success = new Success(successContainer, events);
+const previewCard = new PreviewCard(cloneTemplate<HTMLElement>('#card-preview'), events);
+const basket = new Basket(cloneTemplate<HTMLElement>('#basket'), events);
+const orderForm = new OrderForm(cloneTemplate<HTMLFormElement>('#order'), events);
+const contactsForm = new ContactsForm(cloneTemplate<HTMLFormElement>('#contacts'), events);
+const success = new Success(cloneTemplate<HTMLElement>('#success'), events);
 
 // Синхронизация представлений с моделями данных
 
@@ -57,9 +47,15 @@ function renderBasket(): void {
     header.render({ counter: basketModel.getCount() });
 
     const items = basketModel.getItems().map((product, index) => {
-        const cardContainer = cloneTemplate<HTMLElement>('#card-basket');
-        const card = new BasketCard(cardContainer, events);
-        return card.render({ ...product, index: index + BASKET_ITEM_NUMBER_OFFSET });
+        const card = new BasketCard(
+            cloneTemplate<HTMLElement>('#card-basket'),
+            () => events.emit(AppEvent.BasketRemove, { id: product.id })
+        );
+        return card.render({
+            title: product.title,
+            price: product.price,
+            index: index + BASKET_ITEM_NUMBER_OFFSET,
+        });
     });
 
     basket.render({
@@ -92,9 +88,16 @@ function renderBuyerForms(): void {
 
 events.on(AppEvent.CatalogChanged, () => {
     const cards = catalogModel.getProducts().map((product) => {
-        const cardContainer = cloneTemplate<HTMLElement>('#card-catalog');
-        const card = new CatalogCard(cardContainer, events);
-        return card.render(product);
+        const card = new CatalogCard(
+            cloneTemplate<HTMLElement>('#card-catalog'),
+            () => events.emit(AppEvent.CardSelect, { id: product.id })
+        );
+        return card.render({
+            title: product.title,
+            price: product.price,
+            category: product.category,
+            image: product.image,
+        });
     });
     gallery.render({ items: cards });
 });
@@ -103,13 +106,17 @@ events.on(AppEvent.PreviewChanged, () => {
     const product = catalogModel.getPreview();
     if (!product) return;
 
-    previewCard.render({
-        ...product,
-        buttonText: getPreviewButtonText(product),
-        buttonDisabled: product.price === null,
+    modal.render({
+        content: previewCard.render({
+            title: product.title,
+            price: product.price,
+            category: product.category,
+            image: product.image,
+            description: product.description,
+            buttonText: getPreviewButtonText(product),
+            buttonDisabled: product.price === null,
+        }),
     });
-
-    modal.render({ content: previewContainer });
     modal.open();
 });
 
@@ -125,8 +132,8 @@ events.on(AppEvent.CardSelect, (data: IProductIdEvent) => {
     }
 });
 
-events.on(AppEvent.CardBuy, (data: IProductIdEvent) => {
-    const product = catalogModel.getProduct(data.id);
+events.on(AppEvent.CardAction, () => {
+    const product = catalogModel.getPreview();
     if (!product) return;
 
     if (basketModel.hasProduct(product.id)) {
@@ -146,13 +153,12 @@ events.on(AppEvent.BasketRemove, (data: IProductIdEvent) => {
 });
 
 events.on(AppEvent.BasketOpen, () => {
-    modal.render({ content: basketContainer });
+    modal.render({ content: basket.render() });
     modal.open();
 });
 
 events.on(AppEvent.OrderOpen, () => {
-    orderForm.render({ errors: '' });
-    modal.render({ content: orderContainer });
+    modal.render({ content: orderForm.render({ errors: '' }) });
     modal.open();
 });
 
@@ -165,8 +171,7 @@ events.on(AppEvent.OrderChange, (data: IFormFieldChangeEvent) => {
 });
 
 events.on(AppEvent.OrderSubmit, () => {
-    contactsForm.render({ errors: '' });
-    modal.render({ content: contactsContainer });
+    modal.render({ content: contactsForm.render({ errors: '' }) });
 });
 
 events.on(AppEvent.ContactsChange, (data: IFormFieldChangeEvent) => {
@@ -178,9 +183,8 @@ events.on(AppEvent.ContactsChange, (data: IFormFieldChangeEvent) => {
 });
 
 events.on(AppEvent.ContactsSubmit, () => {
-    const buyer = buyerModel.getData();
     const order: IOrderRequest = {
-        ...buyer,
+        ...buyerModel.getData(),
         total: basketModel.getTotal(),
         items: basketModel.getItems().map((item) => item.id),
     };
@@ -189,8 +193,7 @@ events.on(AppEvent.ContactsSubmit, () => {
         .then((result) => {
             basketModel.clear();
             buyerModel.clear();
-            success.render({ total: result.total });
-            modal.render({ content: successContainer });
+            modal.render({ content: success.render({ total: result.total }) });
         })
         .catch((error) => {
             console.error('Ошибка при оформлении заказа', error);
@@ -198,6 +201,10 @@ events.on(AppEvent.ContactsSubmit, () => {
 });
 
 events.on(AppEvent.ModalClose, () => {
+    modal.close();
+});
+
+events.on(AppEvent.SuccessClose, () => {
     modal.close();
 });
 

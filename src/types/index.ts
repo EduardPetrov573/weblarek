@@ -42,7 +42,9 @@ export interface IOrderResult {
 
 // ===== Типы слоя представления (View) =====
 
-export type TCardBase = Pick<IProduct, 'id' | 'title' | 'price'>;
+export type TCardCallback = () => void;
+
+export type TCardBase = Pick<IProduct, 'title' | 'price'>;
 
 export type TCatalogCard = TCardBase & Pick<IProduct, 'category' | 'image'>;
 

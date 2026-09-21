@@ -51,7 +51,7 @@ export const AppEvent = {
   BasketChanged: 'basket:changed',
   BuyerChanged: 'buyer:changed',
   CardSelect: 'card:select',
-  CardBuy: 'card:buy',
+  CardAction: 'card:action',
   BasketRemove: 'basket:remove',
   BasketOpen: 'basket:open',
   OrderOpen: 'order:open',
@@ -60,5 +60,6 @@ export const AppEvent = {
   ContactsChange: 'contacts:change',
   ContactsSubmit: 'contacts:submit',
   ModalClose: 'modal:close',
+  SuccessClose: 'success:close',
 } as const;
 

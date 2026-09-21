@@ -1,14 +1,10 @@
 import { ProductCard } from './ProductCard';
-import { IEvents } from '../base/Events';
-import { TCatalogCard } from '../../types';
-import { AppEvent } from '../../utils/constants';
+import { TCardCallback, TCatalogCard } from '../../types';
 
 export class CatalogCard extends ProductCard<TCatalogCard> {
-    constructor(container: HTMLElement, events: IEvents) {
-        super(container, events);
+    constructor(container: HTMLElement, onSelect: TCardCallback) {
+        super(container);
 
-        container.addEventListener('click', () => {
-            this.events.emit(AppEvent.CardSelect, { id: this.id });
-        });
+        container.addEventListener('click', () => onSelect());
     }
 }
